@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Of Code 2020</title>
+</head>
+<body>
+    <style>
+        table, th, td {
+            padding: 5px;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        table {
+            margin-top: .5em;
+        }
+        td, th {
+            text-align: center;
+        }
+    </style>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Puzzle [Day.Part]</th>
+                <th>With Sample Data</th>
+                <th>With Full Data</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <template id='tableRow'>
+        <tr>
+            <td class="puzzle"></td>
+            <td>
+                <button>Solve</button>
+            </td>
+            <td>
+                <button>Solve</button>
+            </td>
+            <td></td>
+        </tr>
+    </template>    
+    <script>
+        async function runSolution(day, part, test) {
+            let input = await fetch(`Day${day}${test ? "Sample" : ""}Input.txt`);
+            let inputData = await input.text();
+            drawSolutionToTable(`day${day}Solution${part}`, inputData, `${day}.${part}`);
+        }
+
+        function drawSolutionToTable(callback, data, id) {
+            let solutionCell = document.getElementById(id).closest('tr').cells[3]
+            solutionCell.innerText = window[callback](data);
+            solutionCell.style.color = 'red';
+        }
+
+        function getDecemberDay() {
+            const currentDay = new Date();
+            if (currentDay.getMonth() === 11) return currentDay.getDate() <= 25 ? currentDay.getDate() : 25;
+            return 25;
+        }
+
+        function addScripts() {
+            const template = document.getElementById('tableRow');
+            for (let day = 1; day <= getDecemberDay(); day++) {
+                for (let part = 1; part <= 2; part++) {
+                    let scriptElem = document.createElement('script');
+                    scriptElem.src = "/Day" + day + "Solution" + part + ".js"
+                    document.head.appendChild(scriptElem);
+                    let newTableRow = template.content.cloneNode(true);
+                    newTableRow.querySelector(".puzzle").setAttribute("id", `${day}.${part}`)
+                    let buttons = newTableRow.querySelectorAll('button');
+                    buttons[0].setAttribute("onclick", `runSolution(${day}, ${part}, true)`);
+                    buttons[1].setAttribute("onclick", `runSolution(${day}, ${part}, false)`);
+                    newTableRow.querySelector('.puzzle').innerText = day + '.' + part;
+                    document.querySelector('tbody').appendChild(newTableRow);
+                }
+            }
+        }
+
+        addScripts();
+    </script>
+</body>
+</html>
